@@ -3,6 +3,7 @@
 Because RSClarity is a new, unsigned tool that simulates mouse input, Windows Defender, SmartScreen, or some antivirus/firewall products may flag it as suspicious.
 
 If you downloaded RSClarity from the official link and you trust the file:
+
   • UAC prompt — When Windows asks if you want to allow this app to make changes, click 'Yes' to enable global hotkeys and proper behavior.
   • SmartScreen ('Windows protected your PC') — Click 'More info' → 'Run anyway' to start RSClarity.
   • Antivirus / firewall blocks — You may need to allow RSClarity or add it as an exception. Only do this if you are sure you trust the source.
