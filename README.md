@@ -39,8 +39,6 @@ Requirements
 
 Windows 10 or later.
 
-Python 3.x
-
 Recommended: pyautogui for mouse control, keyboard for global hotkeys.
 
 Quick Use
