@@ -1,886 +1,836 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>RSClarity – Free Auto Clicker</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <style>
-    :root {
-      --bg: #020617;
-      --bg-soft: #020617;
-      --card: #0b1120;
-      --card-soft: #111827;
-      --border: #1f2937;
-      --border-soft: #273549;
-      --accent: #2196F3;  /* Pause + accent */
-      --accent-soft: rgba(33, 150, 243, 0.18);
-      --accent-strong: #0b3a66; /* Help headings in app */
-      --success: #4CAF50; /* Start / ON */
-      --danger: #F44336;  /* Stop / OFF */
-      --warning: #FFD700; /* Help button */
-      --muted: #9ca3af;
-      --text: #e5e7eb;
-      --text-strong: #f9fafb;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-        sans-serif;
-      background:
-        radial-gradient(circle at top, #111827 0, #020617 50%, #000 100%);
-      color: var(--text);
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-    }
-
-    .page {
-      max-width: 1120px;
-      width: 100%;
-    }
-
-    .page-header {
-      margin-bottom: 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    .title-block h1 {
-      font-size: clamp(2rem, 3vw, 2.4rem);
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      font-weight: 700;
-      color: var(--text-strong);
-    }
-
-    .title-block h1 span.highlight {
-      background: linear-gradient(90deg, #3b82f6, #8b5cf6, #f97316);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-    }
-
-    .title-block p {
-      margin-top: 4px;
-      font-size: 0.9rem;
-      color: var(--muted);
-      max-width: 520px;
-    }
-
-    .badge-small {
-      border-radius: 999px;
-      border: 1px solid rgba(148, 163, 184, 0.5);
-      background: rgba(15, 23, 42, 0.92);
-      padding: 4px 10px;
-      font-size: 0.7rem;
-      color: var(--muted);
-    }
-
-    .layout {
-      display: grid;
-      grid-template-columns: minmax(0, 1.6fr) minmax(0, 1.1fr);
-      gap: 20px;
-    }
-
-    @media (max-width: 860px) {
-      .layout {
-        grid-template-columns: minmax(0, 1fr);
-      }
-    }
-
-    /* ---------- Fake RSClarity window ---------- */
-
-    .app-window {
-      background: radial-gradient(circle at top left, rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.96));
-      border-radius: 16px;
-      border: 1px solid var(--border);
-      box-shadow:
-        0 18px 40px rgba(0, 0, 0, 0.75),
-        0 0 0 1px rgba(15, 23, 42, 0.9) inset;
-      padding: 0;
-      overflow: hidden;
-      position: relative;
-    }
-
-    .app-titlebar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 8px 12px;
-      background: linear-gradient(90deg, #020617, #020617, #0b1120);
-      border-bottom: 1px solid #0f172a;
-    }
-
-    .app-title {
-      font-size: 0.85rem;
-      color: var(--text-strong);
-      font-weight: 600;
-    }
-
-    .app-title-dots {
-      display: flex;
-      gap: 6px;
-    }
-
-    .dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 999px;
-      background: rgba(55, 65, 81, 0.95);
-    }
-
-    .dot.red { background: #f97373; }
-    .dot.yellow { background: #facc15; }
-    .dot.green { background: #4ade80; }
-
-    .app-inner {
-      padding: 10px 10px 10px;
-    }
-
-    .top-bar {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 10px;
-    }
-
-    .btn {
-      font-size: 0.8rem;
-      padding: 5px 11px;
-      border-radius: 999px;
-      border: none;
-      cursor: pointer;
-      white-space: nowrap;
-      box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.6);
-      font-weight: 500;
-      line-height: 1.4;
-    }
-
-    .btn-help {
-      background: var(--warning);
-      color: #000;
-    }
-
-    .btn-loadsave {
-      background: #BFEFFF;
-      color: #000;
-    }
-
-    .app-main {
-      display: grid;
-      grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
-      gap: 10px;
-    }
-
-    @media (max-width: 680px) {
-      .app-main {
-        grid-template-columns: minmax(0, 1fr);
-      }
-    }
-
-    .pane {
-      background: rgba(15, 23, 42, 0.9);
-      border-radius: 12px;
-      border: 1px solid var(--border-soft);
-      padding: 10px;
-    }
-
-    .sections-stack {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .section {
-      border-radius: 10px;
-      border: 1px solid var(--border);
-      padding: 8px 9px 8px;
-      background: linear-gradient(145deg, rgba(15, 23, 42, 0.92), rgba(15, 23, 42, 0.98));
-    }
-
-    .section-title {
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-      color: var(--muted);
-      margin-bottom: 6px;
-    }
-
-    .row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 6px;
-      margin-bottom: 6px;
-      flex-wrap: wrap;
-    }
-
-    .row:last-child {
-      margin-bottom: 0;
-    }
-
-    .field-label {
-      font-size: 0.78rem;
-      color: var(--muted);
-    }
-
-    .field-value {
-      font-size: 0.82rem;
-      color: var(--text-strong);
-      font-weight: 600;
-    }
-
-    .field-value-large {
-      font-size: 0.95rem;
-      font-weight: 700;
-    }
-
-    .inputs-inline {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-    }
-
-    .input-small {
-      width: 38px;
-      padding: 3px 4px;
-      border-radius: 4px;
-      border: 1px solid #4b5563;
-      background: #020617;
-      color: var(--text-strong);
-      font-size: 0.8rem;
-      text-align: center;
-    }
-
-    .input-med {
-      width: 60px;
-      padding: 3px 4px;
-      border-radius: 4px;
-      border: 1px solid #4b5563;
-      background: #020617;
-      color: var(--text-strong);
-      font-size: 0.8rem;
-      text-align: center;
-    }
-
-    .input-wide {
-      width: 100%;
-      padding: 3px 5px;
-      border-radius: 4px;
-      border: 1px solid #4b5563;
-      background: #020617;
-      color: var(--text-strong);
-      font-size: 0.84rem;
-    }
-
-    .radio-row,
-    .checkbox-row {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-bottom: 4px;
-    }
-
-    .radio,
-    .checkbox {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      font-size: 0.8rem;
-      color: var(--text);
-      opacity: 0.9;
-      cursor: pointer;
-    }
-
-    .radio input,
-    .checkbox input {
-      accent-color: var(--accent);
-      cursor: pointer;
-    }
-
-    .status-list {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-      gap: 4px 6px;
-      font-size: 0.8rem;
-    }
-
-    .status-list label {
-      color: var(--muted);
-    }
-
-    .status-list span {
-      font-weight: 600;
-      color: var(--text-strong);
-    }
-
-    .calc-display {
-      margin-bottom: 6px;
-    }
-
-    .calc-buttons {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 4px;
-      margin-bottom: 4px;
-    }
-
-    .calc-btn {
-      font-size: 0.78rem;
-      padding: 4px 0;
-      background: #020617;
-      border-radius: 6px;
-      border: 1px solid #4b5563;
-      text-align: center;
-      cursor: default;
-      color: var(--text);
-    }
-
-    .calc-extra {
-      display: flex;
-      gap: 6px;
-      margin-top: 2px;
-    }
-
-    .calc-extra .calc-btn {
-      flex: 0 0 42px;
-    }
-
-    .right-pane-sections {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .grid-form {
-      display: grid;
-      grid-template-columns: auto auto 1fr;
-      row-gap: 4px;
-      column-gap: 6px;
-      align-items: center;
-      font-size: 0.8rem;
-    }
-
-    .grid-form label {
-      color: var(--muted);
-    }
-
-    .grid-form .input-med {
-      justify-self: start;
-    }
-
-    .side-block {
-      align-self: stretch;
-      justify-self: stretch;
-    }
-
-    .caps-tag {
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-      color: var(--muted);
-      margin-bottom: 4px;
-    }
-
-    .pill {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 4px 8px;
-      border-radius: 999px;
-      font-size: 0.74rem;
-      border: 1px solid rgba(148, 163, 184, 0.6);
-      color: var(--muted);
-      background: rgba(15, 23, 42, 0.9);
-    }
-
-    .btn-small {
-      font-size: 0.78rem;
-      padding: 4px 9px;
-      border-radius: 999px;
-      border: 1px solid #4b5563;
-      background: #020617;
-      color: var(--text);
-      cursor: pointer;
-      white-space: nowrap;
-    }
-
-    .btn-record {
-      font-weight: 500;
-    }
-
-    .app-footer {
-      margin-top: 10px;
-      padding: 7px 10px;
-      border-top: 1px solid #0f172a;
-      background: #020617;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      font-size: 0.78rem;
-    }
-
-    .status-label {
-      color: var(--muted);
-    }
-
-    .indicator {
-      padding: 3px 9px;
-      border-radius: 999px;
-      font-size: 0.78rem;
-      font-weight: 600;
-      color: #fff;
-      border: 1px solid rgba(15, 23, 42, 0.9);
-      transition: background 0.15s ease;
-    }
-
-    .indicator.off {
-      background: var(--danger);
-    }
-
-    .indicator.on {
-      background: var(--success);
-    }
-
-    .indicator.pause {
-      background: var(--accent);
-    }
-
-    .indicator-anti {
-      padding-left: 10px;
-      padding-right: 10px;
-      font-size: 0.75rem;
-    }
-
-    /* ---------- Download / info column ---------- */
-
-    .download-card {
-      background: rgba(15, 23, 42, 0.96);
-      border-radius: 16px;
-      border: 1px solid var(--border-soft);
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.75);
-      padding: 16px 16px 18px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .download-card::before {
-      content: "";
-      position: absolute;
-      inset: -40%;
-      background: radial-gradient(circle at top right, var(--accent-soft), transparent 60%);
-      opacity: 0.6;
-      pointer-events: none;
-    }
-
-    .download-inner {
-      position: relative;
-      z-index: 1;
-    }
-
-    .download-card h2 {
-      font-size: 1.05rem;
-      margin-bottom: 4px;
-      color: var(--text-strong);
-    }
-
-    .download-meta {
-      font-size: 0.8rem;
-      color: var(--muted);
-      margin-bottom: 12px;
-    }
-
-    .download-btn-main {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 9px 18px;
-      border-radius: 999px;
-      border: none;
-      font-size: 0.9rem;
-      font-weight: 600;
-      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-      color: #fff;
-      text-decoration: none;
-      box-shadow: 0 16px 40px rgba(37, 99, 235, 0.6);
-      cursor: pointer;
-      margin-bottom: 8px;
-    }
-
-    .download-btn-main span.icon {
-      font-size: 1.1rem;
-      line-height: 1;
-    }
-
-    .download-note {
-      font-size: 0.75rem;
-      color: var(--muted);
-      margin-bottom: 10px;
-    }
-
-    .download-note em {
-      opacity: 0.9;
-    }
-
-    .feature-list {
-      list-style: none;
-      font-size: 0.8rem;
-      color: var(--muted);
-      display: grid;
-      gap: 4px;
-      margin-bottom: 8px;
-    }
-
-    .feature-list li::before {
-      content: "• ";
-      color: var(--accent);
-    }
-
-    .disclaimer {
-      margin-top: 8px;
-      font-size: 0.75rem;
-      line-height: 1.5;
-      color: #fbbf24;
-      background: rgba(120, 53, 15, 0.4);
-      border-radius: 10px;
-      padding: 7px 9px;
-      border: 1px solid rgba(251, 191, 36, 0.7);
-    }
-
-    .footer-page {
-      margin-top: 12px;
-      font-size: 0.75rem;
-      color: var(--muted);
-      text-align: right;
-    }
-  </style>
+    <meta charset="UTF-8" />
+    <title>RSClarity – Free Auto Clicker</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+        :root {
+            --bg: #020617;
+            --bg-soft: #020617;
+            --card: #0b1120;
+            --card-soft: #111827;
+            --border: #1f2937;
+            --border-soft: #273549;
+            --accent: #2196F3; /* Pause + accent */
+            --accent-soft: rgba(33, 150, 243, 0.18);
+            --accent-strong: #0b3a66; /* Help headings in app */
+            --success: #4CAF50; /* Start / ON */
+            --danger: #F44336; /* Stop / OFF */
+            --warning: #FFD700; /* Help button */
+            --muted: #9ca3af;
+            --text: #e5e7eb;
+            --text-strong: #f9fafb;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: radial-gradient(circle at top, #111827 0, #020617 50%, #000 100%);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+
+        .page {
+            max-width: 1120px;
+            width: 100%;
+        }
+
+        .page-header {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .title-block h1 {
+            font-size: clamp(2rem, 3vw, 2.4rem);
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            font-weight: 700;
+            color: var(--text-strong);
+        }
+
+            .title-block h1 span.highlight {
+                background: linear-gradient(90deg, #3b82f6, #8b5cf6, #f97316);
+                -webkit-background-clip: text;
+                background-clip: text;
+                color: transparent;
+            }
+
+        .title-block p {
+            margin-top: 4px;
+            font-size: 0.9rem;
+            color: var(--muted);
+            max-width: 520px;
+        }
+
+        .badge-small {
+            border-radius: 999px;
+            border: 1px solid rgba(148, 163, 184, 0.5);
+            background: rgba(15, 23, 42, 0.92);
+            padding: 4px 10px;
+            font-size: 0.7rem;
+            color: var(--muted);
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1.6fr) minmax(0, 1.1fr);
+            gap: 20px;
+        }
+
+        @media (max-width: 860px) {
+            .layout {
+                grid-template-columns: minmax(0, 1fr);
+            }
+        }
+
+        /* ---------- Fake RSClarity window ---------- */
+
+        .app-window {
+            background: radial-gradient(circle at top left, rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.96));
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(15, 23, 42, 0.9) inset;
+            padding: 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .app-titlebar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 12px;
+            background: linear-gradient(90deg, #020617, #020617, #0b1120);
+            border-bottom: 1px solid #0f172a;
+        }
+
+        .app-title {
+            font-size: 0.85rem;
+            color: var(--text-strong);
+            font-weight: 600;
+        }
+
+        .app-title-dots {
+            display: flex;
+            gap: 6px;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 999px;
+            background: rgba(55, 65, 81, 0.95);
+        }
+
+            .dot.red {
+                background: #f97373;
+            }
+
+            .dot.yellow {
+                background: #facc15;
+            }
+
+            .dot.green {
+                background: #4ade80;
+            }
+
+        .app-inner {
+            padding: 10px 10px 10px;
+        }
+
+        .top-bar {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .btn {
+            font-size: 0.8rem;
+            padding: 5px 11px;
+            border-radius: 999px;
+            border: none;
+            cursor: default;
+            white-space: nowrap;
+            box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.6);
+            font-weight: 500;
+            line-height: 1.4;
+        }
+
+        .btn-help {
+            background: var(--warning);
+            color: #000;
+        }
+
+        .btn-loadsave {
+            background: #BFEFFF;
+            color: #000;
+        }
+
+        .app-main {
+            display: grid;
+            grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+            gap: 10px;
+        }
+
+        @media (max-width: 680px) {
+            .app-main {
+                grid-template-columns: minmax(0, 1fr);
+            }
+        }
+
+        .pane {
+            background: rgba(15, 23, 42, 0.9);
+            border-radius: 12px;
+            border: 1px solid var(--border-soft);
+            padding: 10px;
+        }
+
+        .sections-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .section {
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            padding: 8px 9px 8px;
+            background: linear-gradient(145deg, rgba(15, 23, 42, 0.92), rgba(15, 23, 42, 0.98));
+        }
+
+        .section-title {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+            color: var(--muted);
+            margin-bottom: 6px;
+        }
+
+        .row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 6px;
+            margin-bottom: 6px;
+            flex-wrap: wrap;
+        }
+
+            .row:last-child {
+                margin-bottom: 0;
+            }
+
+        .field-label {
+            font-size: 0.78rem;
+            color: var(--muted);
+        }
+
+        .field-value {
+            font-size: 0.82rem;
+            color: var(--text-strong);
+            font-weight: 600;
+        }
+
+        .field-value-large {
+            font-size: 0.95rem;
+            font-weight: 700;
+        }
+
+        .inputs-inline {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .input-small {
+            width: 38px;
+            padding: 3px 4px;
+            border-radius: 4px;
+            border: 1px solid #4b5563;
+            background: #020617;
+            color: var(--text-strong);
+            font-size: 0.8rem;
+            text-align: center;
+        }
+
+        .input-med {
+            width: 60px;
+            padding: 3px 4px;
+            border-radius: 4px;
+            border: 1px solid #4b5563;
+            background: #020617;
+            color: var(--text-strong);
+            font-size: 0.8rem;
+            text-align: center;
+        }
+
+        .input-wide {
+            width: 100%;
+            padding: 3px 5px;
+            border-radius: 4px;
+            border: 1px solid #4b5563;
+            background: #020617;
+            color: var(--text-strong);
+            font-size: 0.84rem;
+        }
+
+        .radio-row,
+        .checkbox-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 4px;
+        }
+
+        .radio,
+        .checkbox {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.8rem;
+            color: var(--text);
+            opacity: 0.9;
+        }
+
+            .radio input,
+            .checkbox input {
+                pointer-events: none;
+                accent-color: var(--accent);
+            }
+
+        .status-list {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+            gap: 4px 6px;
+            font-size: 0.8rem;
+        }
+
+            .status-list label {
+                color: var(--muted);
+            }
+
+            .status-list span {
+                font-weight: 600;
+                color: var(--text-strong);
+            }
+
+        .calc-display {
+            margin-bottom: 6px;
+        }
+
+        .calc-buttons {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 4px;
+            margin-bottom: 4px;
+        }
+
+        .calc-btn {
+            font-size: 0.78rem;
+            padding: 4px 0;
+            background: #020617;
+            border-radius: 6px;
+            border: 1px solid #4b5563;
+            text-align: center;
+            cursor: default;
+            color: var(--text);
+        }
+
+        .calc-extra {
+            display: flex;
+            gap: 6px;
+            margin-top: 2px;
+        }
+
+            .calc-extra .calc-btn {
+                flex: 0 0 42px;
+            }
+
+        .right-pane-sections {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .grid-form {
+            display: grid;
+            grid-template-columns: auto auto 1fr;
+            row-gap: 4px;
+            column-gap: 6px;
+            align-items: center;
+            font-size: 0.8rem;
+        }
+
+            .grid-form label {
+                color: var(--muted);
+            }
+
+            .grid-form .input-med {
+                justify-self: start;
+            }
+
+        .side-block {
+            align-self: stretch;
+            justify-self: stretch;
+        }
+
+        .caps-tag {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+            color: var(--muted);
+            margin-bottom: 4px;
+        }
+
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4px 8px;
+            border-radius: 999px;
+            font-size: 0.74rem;
+            border: 1px solid rgba(148, 163, 184, 0.6);
+            color: var(--muted);
+            background: rgba(15, 23, 42, 0.9);
+        }
+
+        .btn-small {
+            font-size: 0.78rem;
+            padding: 4px 9px;
+            border-radius: 999px;
+            border: 1px solid #4b5563;
+            background: #020617;
+            color: var(--text);
+            cursor: default;
+            white-space: nowrap;
+        }
+
+        .btn-record {
+            font-weight: 500;
+        }
+
+        .app-footer {
+            margin-top: 10px;
+            padding: 7px 10px;
+            border-top: 1px solid #0f172a;
+            background: #020617;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            font-size: 0.78rem;
+        }
+
+        .status-label {
+            color: var(--muted);
+        }
+
+        .indicator {
+            padding: 3px 9px;
+            border-radius: 999px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: #fff;
+            border: 1px solid rgba(15, 23, 42, 0.9);
+        }
+
+            .indicator.off {
+                background: var(--danger);
+            }
+
+            .indicator.on {
+                background: var(--success);
+            }
+
+            .indicator.pause {
+                background: var(--accent);
+            }
+
+        .indicator-anti {
+            padding-left: 10px;
+            padding-right: 10px;
+            font-size: 0.75rem;
+        }
+
+        /* ---------- Download / info column ---------- */
+
+        .download-card {
+            background: rgba(15, 23, 42, 0.96);
+            border-radius: 16px;
+            border: 1px solid var(--border-soft);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.75);
+            padding: 16px 16px 18px;
+            position: relative;
+            overflow: hidden;
+        }
+
+            .download-card::before {
+                content: "";
+                position: absolute;
+                inset: -40%;
+                background: radial-gradient(circle at top right, var(--accent-soft), transparent 60%);
+                opacity: 0.6;
+                pointer-events: none;
+            }
+
+        .download-inner {
+            position: relative;
+            z-index: 1;
+        }
+
+        .download-card h2 {
+            font-size: 1.05rem;
+            margin-bottom: 4px;
+            color: var(--text-strong);
+        }
+
+        .download-meta {
+            font-size: 0.8rem;
+            color: var(--muted);
+            margin-bottom: 12px;
+        }
+
+        .download-btn-main {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 9px 18px;
+            border-radius: 999px;
+            border: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            color: #fff;
+            text-decoration: none;
+            box-shadow: 0 16px 40px rgba(37, 99, 235, 0.6);
+            cursor: pointer;
+            margin-bottom: 8px;
+        }
+
+            .download-btn-main span.icon {
+                font-size: 1.1rem;
+                line-height: 1;
+            }
+
+        .download-note {
+            font-size: 0.75rem;
+            color: var(--muted);
+            margin-bottom: 10px;
+        }
+
+            .download-note em {
+                opacity: 0.9;
+            }
+
+        .feature-list {
+            list-style: none;
+            font-size: 0.8rem;
+            color: var(--muted);
+            display: grid;
+            gap: 4px;
+            margin-bottom: 8px;
+        }
+
+            .feature-list li::before {
+                content: "• ";
+                color: var(--accent);
+            }
+
+        .disclaimer {
+            margin-top: 8px;
+            font-size: 0.75rem;
+            line-height: 1.5;
+            color: #fbbf24;
+            background: rgba(120, 53, 15, 0.4);
+            border-radius: 10px;
+            padding: 7px 9px;
+            border: 1px solid rgba(251, 191, 36, 0.7);
+        }
+
+        .footer-page {
+            margin-top: 12px;
+            font-size: 0.75rem;
+            color: var(--muted);
+            text-align: right;
+        }
+    </style>
 </head>
 <body>
-  <div class="page">
-    <div class="page-header">
-      <div class="title-block">
-        <h1><span class="highlight">RSClarity</span> Auto Clicker</h1>
-        <p>
-          A desktop auto clicker focused on clarity and control: RS Mode, run duration,
-          live counters, CPS override, area targeting and anti-detection tools —
-          packaged as a clean, single window.
-        </p>
-      </div>
-      <div class="badge-small">
-        F4: Start · F5: Stop · F6: Pause/Resume
-      </div>
-    </div>
-
-    <div class="layout">
-      <!-- Left: fake RSClarity window that mirrors the UI -->
-      <div class="app-window">
-        <div class="app-titlebar">
-          <div class="app-title">RSClarity</div>
-          <div class="app-title-dots">
-            <div class="dot red"></div>
-            <div class="dot yellow"></div>
-            <div class="dot green"></div>
-          </div>
+    <div class="page">
+        <div class="page-header">
+            <div class="title-block">
+                <h1><span class="highlight">RSClarity</span> Auto Clicker</h1>
+                <p>
+                    A desktop auto clicker focused on clarity and control: RS Mode, run duration,
+                    live counters, CPS override, area targeting and anti-detection tools —
+                    packaged as a clean, single window.
+                </p>
+            </div>
+            <div class="badge-small">
+                F4: Start · F5: Stop · F6: Pause/Resume
+            </div>
         </div>
 
-        <div class="app-inner">
-          <div class="top-bar">
-            <button class="btn btn-help">Help</button>
-            <button class="btn btn-loadsave">Load/Save Settings</button>
-          </div>
-
-          <div class="app-main">
-            <!-- Left column of the app -->
-            <div class="pane">
-              <div class="sections-stack">
-                <!-- RS Mode + manual + anti -->
-                <div class="section">
-                  <div class="section-title">RS Mode</div>
-                  <div class="radio-row">
-                    <label class="radio">
-                      <input type="radio" checked />
-                      <span>Single RS</span>
-                    </label>
-                    <label class="radio">
-                      <input type="radio" />
-                      <span>Double RS</span>
-                    </label>
-                  </div>
-                  <div class="checkbox-row">
-                    <label class="checkbox">
-                      <input type="checkbox" />
-                      <span>Allow Manual Control</span>
-                    </label>
-                  </div>
-                  <div class="checkbox-row">
-                    <label class="checkbox" id="anti-detection-label">
-                      <input type="checkbox" id="antiDetectionCheckbox" />
-                      <span>Anti-Detection</span>
-                    </label>
-                  </div>
-                </div>
-
-                <!-- Run Duration -->
-                <div class="section">
-                  <div class="section-title">Run Duration (H:M:S)</div>
-                  <div class="row">
-                    <div class="field-label">Duration</div>
-                    <div class="inputs-inline">
-                      <input class="input-small" type="text" value="00" />
-                      <span>:</span>
-                      <input class="input-small" type="text" value="00" />
-                      <span>:</span>
-                      <input class="input-small" type="text" value="00" />
+        <div class="layout">
+            <!-- Left: fake RSClarity window that mirrors the UI -->
+            <div class="app-window">
+                <div class="app-titlebar">
+                    <div class="app-title">RSClarity</div>
+                    <div class="app-title-dots">
+                        <div class="dot red"></div>
+                        <div class="dot yellow"></div>
+                        <div class="dot green"></div>
                     </div>
-                  </div>
                 </div>
 
-                <!-- Counters -->
-                <div class="section">
-                  <div class="section-title">Counters</div>
-                  <div class="status-list">
-                    <div>
-                      <label>RSClarity:</label>
-                      <span> N/A</span>
+                <div class="app-inner">
+                    <div class="top-bar">
+                        <button class="btn btn-help">Help</button>
+                        <button class="btn btn-loadsave">Load/Save Settings</button>
                     </div>
-                    <div>
-                      <label>Remaining time:</label>
-                      <span> Unlimited</span>
-                    </div>
-                    <div>
-                      <label>CPS:</label>
-                      <span> 0.00</span>
-                    </div>
-                  </div>
-                </div>
 
-                <!-- Calculator -->
-                <div class="section">
-                  <div class="section-title">Calculator</div>
-                  <div class="calc-display">
-                    <input class="input-wide" type="text" value="" />
-                  </div>
-                  <div class="calc-buttons">
-                    <div class="calc-btn">7</div>
-                    <div class="calc-btn">8</div>
-                    <div class="calc-btn">9</div>
-                    <div class="calc-btn">/</div>
-                    <div class="calc-btn">4</div>
-                    <div class="calc-btn">5</div>
-                    <div class="calc-btn">6</div>
-                    <div class="calc-btn">*</div>
-                    <div class="calc-btn">1</div>
-                    <div class="calc-btn">2</div>
-                    <div class="calc-btn">3</div>
-                    <div class="calc-btn">-</div>
-                    <div class="calc-btn">0</div>
-                    <div class="calc-btn">.</div>
-                    <div class="calc-btn">=</div>
-                    <div class="calc-btn">+</div>
-                  </div>
-                  <div class="calc-extra">
-                    <div class="calc-btn">C</div>
-                    <div class="calc-btn">⌫</div>
-                  </div>
-                </div>
+                    <div class="app-main">
+                        <!-- Left column of the app -->
+                        <div class="pane">
+                            <div class="sections-stack">
+                                <!-- RS Mode + manual + anti -->
+                                <div class="section">
+                                    <div class="section-title">RS Mode</div>
+                                    <div class="radio-row">
+                                        <label class="radio">
+                                            <input type="radio" checked disabled />
+                                            <span>Single RS</span>
+                                        </label>
+                                        <label class="radio">
+                                            <input type="radio" disabled />
+                                            <span>Double RS</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-row">
+                                        <label class="checkbox">
+                                            <input type="checkbox" disabled />
+                                            <span>Allow Manual Control</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-row">
+                                        <label class="checkbox">
+                                            <input type="checkbox" disabled />
+                                            <span>Anti-Detection</span>
+                                        </label>
+                                    </div>
+                                </div>
 
-                <!-- Start / Stop / Pause buttons -->
-                <div class="section">
-                  <div class="section-title">Runner Controls</div>
-                  <div class="row">
-                    <button class="btn-small" id="btnStart" style="background: var(--success); color:#fff; border-color:#047857;">
-                      Start (F4)
-                    </button>
-                    <button class="btn-small" id="btnStop" style="background: var(--danger); color:#fff; border-color:#b91c1c;">
-                      Stop (F5)
-                    </button>
-                    <button class="btn-small" id="btnPause" style="background: var(--accent); color:#fff; border-color:#1d4ed8;">
-                      Pause (F6)
-                    </button>
-                  </div>
+                                <!-- Run Duration -->
+                                <div class="section">
+                                    <div class="section-title">Run Duration (H:M:S)</div>
+                                    <div class="row">
+                                        <div class="field-label">Duration</div>
+                                        <div class="inputs-inline">
+                                            <input class="input-small" type="text" value="00" disabled />
+                                            <span>:</span>
+                                            <input class="input-small" type="text" value="00" disabled />
+                                            <span>:</span>
+                                            <input class="input-small" type="text" value="00" disabled />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Counters -->
+                                <div class="section">
+                                    <div class="section-title">Counters</div>
+                                    <div class="status-list">
+                                        <div>
+                                            <label>RSClarity:</label>
+                                            <span> N/A</span>
+                                        </div>
+                                        <div>
+                                            <label>Remaining time:</label>
+                                            <span> Unlimited</span>
+                                        </div>
+                                        <div>
+                                            <label>CPS:</label>
+                                            <span> 0.00</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Calculator -->
+                                <div class="section">
+                                    <div class="section-title">Calculator</div>
+                                    <div class="calc-display">
+                                        <input class="input-wide" type="text" value="" disabled />
+                                    </div>
+                                    <div class="calc-buttons">
+                                        <div class="calc-btn">7</div>
+                                        <div class="calc-btn">8</div>
+                                        <div class="calc-btn">9</div>
+                                        <div class="calc-btn">/</div>
+                                        <div class="calc-btn">4</div>
+                                        <div class="calc-btn">5</div>
+                                        <div class="calc-btn">6</div>
+                                        <div class="calc-btn">*</div>
+                                        <div class="calc-btn">1</div>
+                                        <div class="calc-btn">2</div>
+                                        <div class="calc-btn">3</div>
+                                        <div class="calc-btn">-</div>
+                                        <div class="calc-btn">0</div>
+                                        <div class="calc-btn">.</div>
+                                        <div class="calc-btn">=</div>
+                                        <div class="calc-btn">+</div>
+                                    </div>
+                                    <div class="calc-extra">
+                                        <div class="calc-btn">C</div>
+                                        <div class="calc-btn">⌫</div>
+                                    </div>
+                                </div>
+
+                                <!-- Start / Stop / Pause buttons -->
+                                <div class="section">
+                                    <div class="section-title">Runner Controls</div>
+                                    <div class="row">
+                                        <button class="btn-small" style="background: var(--success); color:#fff; border-color:#047857;">
+                                            Start (F4)
+                                        </button>
+                                        <button class="btn-small" style="background: var(--danger); color:#fff; border-color:#b91c1c;">
+                                            Stop (F5)
+                                        </button>
+                                        <button class="btn-small" style="background: var(--accent); color:#fff; border-color:#1d4ed8;">
+                                            Pause (F6)
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right column of the app -->
+                        <div class="pane">
+                            <div class="right-pane-sections">
+                                <!-- CPS Override -->
+                                <div class="section">
+                                    <div class="section-title">CPS Override</div>
+
+                                    <div class="grid-form">
+                                        <label>CP/min</label>
+                                        <input class="input-med" type="text" value="" disabled />
+                                        <div class="side-block" rowspan="3">
+                                            <div class="caps-tag">CPS range</div>
+                                            <div class="inputs-inline">
+                                                <input class="input-small" type="text" value="" disabled />
+                                                <span>–</span>
+                                                <input class="input-small" type="text" value="" disabled />
+                                            </div>
+                                        </div>
+
+                                        <label>CP/sec</label>
+                                        <input class="input-med" type="text" value="" disabled />
+                                        <div></div>
+
+                                        <label>CP/ms</label>
+                                        <input class="input-med" type="text" value="" disabled />
+                                        <div></div>
+                                    </div>
+
+                                    <div class="row" style="margin-top:6px;">
+                                        <div>
+                                            <div class="caps-tag">RSClarity Limit</div>
+                                            <div class="inputs-inline">
+                                                <input class="input-med" type="text" value="" disabled />
+                                                <label class="checkbox" style="margin-left:6px;">
+                                                    <input type="checkbox" disabled />
+                                                    <span>Enable</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Location Area (single) -->
+                                <div class="section">
+                                    <div class="section-title">Location Area (single)</div>
+                                    <div class="row">
+                                        <button class="btn-small">Set Area</button>
+                                        <label class="checkbox">
+                                            <input type="checkbox" disabled />
+                                            <span>Enable</span>
+                                        </label>
+                                        <button class="btn-small">Clear Area</button>
+                                    </div>
+                                    <div class="row" style="margin-top:4px;">
+                                        <div class="field-label">Area:</div>
+                                        <div class="field-value field-value-large">Not set</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div> <!-- /.app-main -->
+                </div> <!-- /.app-inner -->
+                <!-- Status bar to match RSClarity -->
+                <div class="app-footer">
+                    <div class="status-label">Status: Ready</div>
+                    <div style="display:flex; gap:6px; align-items:center;">
+                        <div class="indicator off">OFF</div>
+                        <div class="indicator indicator-anti off">Anti-Detection: OFF</div>
+                    </div>
                 </div>
-              </div>
             </div>
 
-            <!-- Right column of the app -->
-            <div class="pane">
-              <div class="right-pane-sections">
-                <!-- CPS Override -->
-                <div class="section">
-                  <div class="section-title">CPS Override</div>
-
-                  <div class="grid-form">
-                    <label>CP/min</label>
-                    <input class="input-med" type="text" value="" />
-                    <div class="side-block" rowspan="3">
-                      <div class="caps-tag">CPS range</div>
-                      <div class="inputs-inline">
-                        <input class="input-small" type="text" value="" />
-                        <span>–</span>
-                        <input class="input-small" type="text" value="" />
-                      </div>
+            <!-- Right: download + info -->
+            <div class="download-card">
+                <div class="download-inner">
+                    <h2>Download RSClarity</h2>
+                    <div class="download-meta">
+                        Latest version: <strong>v1.0.0</strong> · Windows desktop
                     </div>
 
-                    <label>CP/sec</label>
-                    <input class="input-med" type="text" value="" />
-                    <div></div>
+                    <!-- TODO: update href to your real file name, e.g. RSClarity-v1.0.0.zip -->
+                    <a class="download-btn-main" href="RSClarity-v1.0.0.zip" download>
+                        <span class="icon">⬇</span>
+                        <span>Download RSClarity</span>
+                    </a>
 
-                    <label>CP/ms</label>
-                    <input class="input-med" type="text" value="" />
-                    <div></div>
-                  </div>
-
-                  <div class="row" style="margin-top:6px;">
-                    <div>
-                      <div class="caps-tag">RSClarity Limit</div>
-                      <div class="inputs-inline">
-                        <input class="input-med" type="text" value="" />
-                        <label class="checkbox" style="margin-left:6px;">
-                          <input type="checkbox" />
-                          <span>Enable</span>
-                        </label>
-                      </div>
+                    <div class="download-note">
+                        Place your <code>RSClarity-v1.0.0.zip</code> (or <code>.exe</code> / <code>.pyw</code>) in the
+                        same repo folder as this <code>index.html</code> so the button works.
                     </div>
-                    <div>
 
-                <!-- Location Area (single) -->
-                <div class="section">
-                  <div class="section-title">Location Area (single)</div>
-                  <div class="row">
-                    <button class="btn-small">Set Area</button>
-                    <label class="checkbox">
-                      <input type="checkbox" />
-                      <span>Enable</span>
-                    </label>
-                    <button class="btn-small">Clear Area</button>
-                  </div>
-                  <div class="row" style="margin-top:4px;">
-                    <div class="field-label">Area:</div>
-                    <div class="field-value field-value-large">Not set</div>
-                  </div>
+                    <ul class="feature-list">
+                        <li>Single/Double RS modes with manual control toggle.</li>
+                        <li>Run Duration (H:M:S) with automatic stop when time is up.</li>
+                        <li>Live counters for remaining actions, remaining time and CPS.</li>
+                        <li>CPS Override (CP/min, CP/sec, CP/ms, range + RSClarity Limit).</li>
+                        <li>Area selection overlay (&ldquo;Location Area (single)&rdquo;) for targeted clicks.</li>
+                        <li>Anti-Detection jitter and randomness to reduce repetitive patterns.</li>
+                        <li>Embedded calculator for quick CPS and limit calculations.</li>
+                    </ul>
+
+                    <div class="disclaimer">
+                        <strong>Disclaimer:</strong> Auto-clickers may violate the Terms of Service of some games
+                        and services and can lead to bans or account penalties. RSClarity is provided as-is.
+                        Use it at your own risk and only where such tools are allowed.
+                    </div>
                 </div>
-              </div>
             </div>
-          </div> <!-- /.app-main -->
-        </div> <!-- /.app-inner -->
-
-        <!-- Status bar to match RSClarity -->
-        <div class="app-footer">
-          <div class="status-label" id="statusLabel">Status: Ready</div>
-          <div style="display:flex; gap:6px; align-items:center;">
-            <div class="indicator off" id="indicatorMain">OFF</div>
-            <div class="indicator indicator-anti off" id="indicatorAnti">Anti-Detection: OFF</div>
-          </div>
         </div>
-      </div>
 
-      <!-- Right: download + info -->
-      <div class="download-card">
-        <div class="download-inner">
-          <h2>Download RSClarity</h2>
-          <div class="download-meta">
-            Latest version: <strong>v1.0.0</strong> · Windows desktop (.exe)
-          </div>
-
-          <!-- Download RSClarity.exe (must be in the same folder as index.html) -->
-          <a class="download-btn-main" href="RSClarity.exe" download>
-            <span class="icon">⬇</span>
-            <span>Download RSClarity.exe</span>
-          </a>
-
-          <div class="download-note">
-            When you run RSClarity for the first time, Windows may warn that it’s from an unknown publisher.
-            Choose <em>More info → Run anyway</em> if you trust this tool.
-          </div>
-
-          <ul class="feature-list">
-            <li>Single/Double RS modes with manual control toggle.</li>
-            <li>Run Duration (H:M:S) with automatic stop when time is up.</li>
-            <li>Live counters for remaining actions, remaining time and CPS.</li>
-            <li>CPS Override (CP/min, CP/sec, CP/ms, range + RSClarity Limit).</li>
-            <li>Area selection overlay (&ldquo;Location Area (single)&rdquo;) for targeted clicks.</li>
-            <li>Anti-Detection jitter and randomness to reduce repetitive patterns.</li>
-            <li>Embedded calculator for quick CPS and limit calculations.</li>
-          </ul>
-
-          <div class="disclaimer">
-            <strong>Disclaimer:</strong> Auto-clickers may violate the Terms of Service of some games
-            and services and can lead to bans or account penalties. RSClarity is provided as-is.
-            Use it at your own risk and only where such tools are allowed.
-          </div>
+        <div class="footer-page">
+            RSClarity &mdash; desktop auto clicker by you. No ads, no paywalls.
         </div>
-      </div>
     </div>
-
-    <div class="footer-page">
-      RSClarity &mdash; desktop auto clicker by you. No ads, no paywalls.
-    </div>
-  </div>
-
-  <!-- Simple JS to make the fake UI feel alive -->
-  <script>
-    (function () {
-      const statusLabel = document.getElementById("statusLabel");
-      const indicatorMain = document.getElementById("indicatorMain");
-      const indicatorAnti = document.getElementById("indicatorAnti");
-      const btnStart = document.getElementById("btnStart");
-      const btnStop = document.getElementById("btnStop");
-      const btnPause = document.getElementById("btnPause");
-      const antiCheckbox = document.getElementById("antiDetectionCheckbox");
-
-      function setMainIndicator(mode) {
-        indicatorMain.classList.remove("off", "on", "pause");
-        if (mode === "on") {
-          indicatorMain.textContent = "ON";
-          indicatorMain.classList.add("on");
-        } else if (mode === "pause") {
-          indicatorMain.textContent = "PAUSE";
-          indicatorMain.classList.add("pause");
-        } else {
-          indicatorMain.textContent = "OFF";
-          indicatorMain.classList.add("off");
-        }
-      }
-
-      btnStart.addEventListener("click", () => {
-        statusLabel.textContent = "Status: Running";
-        setMainIndicator("on");
-      });
-
-      btnStop.addEventListener("click", () => {
-        statusLabel.textContent = "Status: Ready";
-        setMainIndicator("off");
-      });
-
-      btnPause.addEventListener("click", () => {
-        statusLabel.textContent = "Status: Paused";
-        setMainIndicator("pause");
-      });
-
-      antiCheckbox.addEventListener("change", () => {
-        if (antiCheckbox.checked) {
-          indicatorAnti.textContent = "Anti-Detection: ON";
-          indicatorAnti.classList.remove("off");
-          indicatorAnti.classList.add("on");
-        } else {
-          indicatorAnti.textContent = "Anti-Detection: OFF";
-          indicatorAnti.classList.remove("on");
-          indicatorAnti.classList.add("off");
-        }
-      });
-    })();
-  </script>
 </body>
 </html>
