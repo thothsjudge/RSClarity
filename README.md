@@ -16,6 +16,8 @@ Never disable your security software globally just for RSClarity. Adjust only wh
 
 https://thothsjudge.github.io/RSClarity/
 
+GLOBAL HOTKEYS (F4–F6) ONLY WORK WHEN RUN AS ADMINISTRATOR.
+
 ----------------------------------------------------------------------------------------------------------------------------------------------
 # RSClarity
 RSClarity is a desktop automation tool that simulates repeatable mouse actions with human-like timing. Configure CPS ranges, run duration, and action limits, record your own CPS, target a custom screen area, and use the built-in calculator—plus Anti-Detection, jitter and configurable click rates.  and global hotkeys for precise, flexible control. It is designed for stress-testing, repetitive workflows, and input automation on Windows.
@@ -34,7 +36,7 @@ Optional Anti-Detection jitter and micro-delays for more natural-looking input.
 
 Built-in CPS recorder and mini calculator.
 
-Global hotkeys (F4–F7) when run as Administrator.
+GLOBAL HOTKEYS (F4–F6) ONLY WORK WHEN RUN AS ADMINISTRATOR.
 
 ---------------------------------
 # Requirements
