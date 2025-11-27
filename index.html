@@ -722,12 +722,21 @@
                                     <div class="grid-form">
                                         <label>CP/min</label>
                                         <input class="input-med" type="text" value="" />
-                                        <div class="side-block" rowspan="3">
+                                        <div class="side-block">
                                             <div class="caps-tag">CPS range</div>
                                             <div class="inputs-inline">
                                                 <input class="input-small" type="text" value="" />
                                                 <span>–</span>
                                                 <input class="input-small" type="text" value="" />
+                                            </div>
+
+                                            <div class="caps-tag" style="margin-top:6px;">RSClarity Limit</div>
+                                            <div class="inputs-inline">
+                                                <input class="input-med" type="text" value="" />
+                                                <label class="checkbox" style="margin-left:6px;">
+                                                    <input type="checkbox" />
+                                                    <span>Enable</span>
+                                                </label>
                                             </div>
                                         </div>
 
@@ -738,21 +747,6 @@
                                         <label>CP/ms</label>
                                         <input class="input-med" type="text" value="" />
                                         <div></div>
-                                    </div>
-
-                                    <div class="row" style="margin-top:6px;">
-                                        <div>
-                                            <div class="caps-tag">RSClarity Limit</div>
-                                            <div class="inputs-inline">
-                                                <input class="input-med" type="text" value="" />
-                                                <label class="checkbox" style="margin-left:6px;">
-                                                    <input type="checkbox" />
-                                                    <span>Enable</span>
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div>
-                                        </div>
                                     </div>
                                 </div>
 
@@ -780,8 +774,8 @@
                 <div class="app-footer">
                     <div class="status-label" id="statusLabel">Ready</div>
                     <div style="display:flex; gap:6px; align-items:center;">
-                        <div class="indicator off" id="indicatorMain">OFF</div>
                         <div class="indicator indicator-anti off" id="indicatorAnti">Anti-Detection: OFF</div>
+                        <div class="indicator off" id="indicatorMain">OFF</div>
                     </div>
                 </div>
             </div>
