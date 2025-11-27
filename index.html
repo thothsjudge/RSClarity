@@ -609,7 +609,7 @@
                         <!-- Left column of the app -->
                         <div class="pane">
                             <div class="sections-stack">
-                                <!-- RS Mode + manual + anti -->
+                                <!-- RS Mode + Anti-Detection -->
                                 <div class="section">
                                     <div class="section-title">RS Mode</div>
                                     <div class="radio-row">
@@ -620,10 +620,6 @@
                                         <label class="radio">
                                             <input type="radio" />
                                             <span>Double RS</span>
-                                        </label>
-                                    </div>
-                                    <div class="checkbox-row">
-                                        <label class="checkbox">
                                         </label>
                                     </div>
                                     <div class="checkbox-row">
@@ -782,7 +778,7 @@
                 </div> <!-- /.app-inner -->
                 <!-- Status bar to match RSClarity -->
                 <div class="app-footer">
-                    <div class="status-label" id="statusLabel">Status: Ready</div>
+                    <div class="status-label" id="statusLabel">Ready</div>
                     <div style="display:flex; gap:6px; align-items:center;">
                         <div class="indicator off" id="indicatorMain">OFF</div>
                         <div class="indicator indicator-anti off" id="indicatorAnti">Anti-Detection: OFF</div>
@@ -851,7 +847,7 @@
         indicatorMain.textContent = "ON";
         indicatorMain.classList.add("on");
         } else if (mode === "pause") {
-        indicatorMain.textContent = "PAUSE";
+        indicatorMain.textContent = "Paused";
         indicatorMain.classList.add("pause");
         } else {
         indicatorMain.textContent = "OFF";
@@ -860,17 +856,17 @@
         }
 
         btnStart.addEventListener("click", () => {
-        statusLabel.textContent = "Status: Running";
+        statusLabel.textContent = "Running";
         setMainIndicator("on");
         });
 
         btnStop.addEventListener("click", () => {
-        statusLabel.textContent = "Status: Ready";
+        statusLabel.textContent = "Ready";
         setMainIndicator("off");
         });
 
         btnPause.addEventListener("click", () => {
-        statusLabel.textContent = "Status: Paused";
+        statusLabel.textContent = "Paused";
         setMainIndicator("pause");
         });
 
