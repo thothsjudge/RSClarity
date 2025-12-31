@@ -1,6 +1,10 @@
 # RSClarity
 Free auto clicker – RSClarity
 
+Click on RSClarity.exe and click View Raw to download or Copy and Paste this Link into the Browser.
+
+https://thothsjudge.github.io/RSClarity/
+
 # Notice
 Because RSClarity is a new, unsigned tool that simulates mouse input, Windows Defender, SmartScreen, or some antivirus/firewall products may flag it as suspicious.
 
@@ -13,8 +17,6 @@ If you downloaded RSClarity from the official link and you trust the file:
 • Antivirus / firewall blocks — You may need to allow RSClarity or add it as an exception. Only do this if you are sure you trust the source.
 
 Never disable your security software globally just for RSClarity. Adjust only what you need, and only if you fully trust the executable.
-
-https://thothsjudge.github.io/RSClarity/
 
 GLOBAL HOTKEYS (F4–F6) ONLY WORK WHEN RUN AS ADMINISTRATOR.
 
