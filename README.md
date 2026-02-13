@@ -6,17 +6,17 @@ Click on RSClarity.exe and click View Raw to download or Copy and Paste this Lin
 https://thothsjudge.github.io/RSClarity/
 
 # Notice
-Because RSClarity is a new, unsigned tool that simulates mouse input, Windows Defender, SmartScreen, or some antivirus/firewall products may flag it as suspicious.
+Because RSClarity is an unsigned tool that simulates mouse input, Windows Defender, SmartScreen, or other antivirus/firewall products may flag it as suspicious, escpecially the first time you run it.
 
-If you downloaded RSClarity from the official link and you trust the file:
+If you downloaded RSClarity from my Official link:
 
 • UAC prompt — When Windows asks if you want to allow this app to make changes, click 'Yes' to enable global hotkeys and proper behavior.
 
 • SmartScreen ('Windows protected your PC') — Click 'More info' → 'Run anyway' to start RSClarity.
 
-• Antivirus / firewall blocks — You may need to allow RSClarity or add it as an exception. Only do this if you are sure you trust the source.
+• Antivirus / firewall blocks — You may need to allow RSClarity and/or add it as an exception.
 
-Never disable your security software globally just for RSClarity. Adjust only what you need, and only if you fully trust the executable.
+Never disable your security software globally just for RSClarity. Adjust only what you need.
 
 GLOBAL HOTKEYS (F4–F6) ONLY WORK WHEN RUN AS ADMINISTRATOR.
 
@@ -61,4 +61,4 @@ Click Start or press F4. Use F6 to pause/resume and F5 to stop.
 
 Safety & Responsibility
 
-Only use RSClarity where automation is allowed. Do not use it to violate terms of service or to gain unfair advantages. The author is not responsible for bans, damage, or misuse. Use at your own risk.
+Only use RSClarity where automation is allowed. Do not use it to violate terms of service or to gain unfair advantages. The author is not responsible for bans, damage, misuse, or any legal sanctions that arise from the use of this software. Use at your own risk.
